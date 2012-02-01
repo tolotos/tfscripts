@@ -4,12 +4,16 @@
 #       correlate_cafe_count.py
 #
 #==============================================================================
+#Locate the Tfsuite module in ../
+import sys, os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+#==============================================================================
 from optparse import OptionParser
 from Tfsuite.Classes.cluster import Cluster
 from Tfsuite.Parser.cyto import Cyto
+from Tfsuite.Parser.color import Color
 import cPickle as pickle
 import xmlrpclib
-import random
 #==============================================================================
 #Command line options==========================================================
 #==============================================================================
@@ -21,9 +25,10 @@ cloptions.add_option('-p', '--pickle', dest = 'pickle',
     default = 'pickled_orthomcl_clusters.p')
 cloptions.add_option('-n', '--network', dest = 'net_in',
     help = 'Network input file', metavar='FILE', default = '')
+cloptions.add_option('-y', '--yaml', dest = 'yaml',
+    help = 'Filename for the color.yaml', metavar='FILE')
 (options, args) = cloptions.parse_args()
 #==============================================================================
-
 
 def load_clusters(clusters):
     '''Loads clusters from pickled objects.
@@ -42,55 +47,50 @@ def load_network(net_file,name):
         cytoscape.createNetwork(title)
     else:
         cytoscape.createNetwork(title)
-
     network = Cyto()
     network.load(net_file)
-
     return network, cytoscape
 
 def connect_server(server_name):
     server = xmlrpclib.ServerProxy(server_name)
     return server
 
+def load_colors(color_yaml):
+    colors = Color()
+    colors.load(color_yaml)
+    colors = colors.rgb.items()
+    return colors
+
 def color_by_cluster(id,cytoscape,cluster,color):
-    red = color[0]
-    green = color[1]
-    blue = color[2]
+    r,g,b = color[0],color[1],color[2]
     for member in cluster.members:
         if member.species == "hsap":
             for node in cytoscape.getNodes():
                 if member.associated_name == str(node):
                     cytoscape.setNodeFillColor(id,[node], red,green,blue)
 
-def color_by_arrangement(id, cytoscape, arag_dic,color):
+def color_by_arrangement(id, cytoscape, arag_dic):
+    colors = load_colors(options.yaml)
     for arag, members in arag_dic.items():
-        color = random_color(color)
-        red = color[0]
-        green = color[1]
-        blue = color[2]
-        print color, arag, members
+        color_name = colors[0][0]
+        color_rgb = colors[0][1]
+        #print color_rgb
+        r,g,b = color_rgb[0],color_rgb[1],color_rgb[2]
+        #print color_name, arag, members
         for member in members:
             for node in cytoscape.getNodes():
                 if member == str(node):
-                    cytoscape.setNodeFillColor(id,[node], red,green,blue)
+                    cytoscape.setNodeFillColor(id,[node], r,g,b)
+        del colors[0]
 
 def scale_nodesize_by_connectivity(range,id,cytoscape):
-    size = 50
+    size = 70
     for i in range:
-        #print i
         for node in cytoscape.getNodes():
-            #print node
             connections = len(cytoscape.getNodeNeighbors(id, node))
-            #print connections
-            #print "-----"
             if connections >= i:
                 cytoscape.setNodeProperty(node,"Node Size", str(size))
         size +=6
-
-def random_color(color):
-        for i in range(len(color)):
-            color[i] = random.randint(0,255)
-        return color
 
 def species_arangements(clusters,species):
     arag_dic = {}
@@ -113,7 +113,6 @@ def shape_by_arangement(arag_dic,id, cytoscape):
     else:
         for num, arangements in enumerate(arag_dic):
             for node in arag_dic[arangements]:
-              #  print node,shapes[num], arangements
                 cytoscape.setNodeProperty(node,"Node Shape", shapes[num])
 
 def shape_by_cluster(id,cytoscape, clusters):
@@ -137,10 +136,18 @@ def add_cluster_id_to_name(network,clusters, species, cytoscape):
                         if member.associated_name == str(node):
                             cl_name = member.associated_name+id
                             cytoscape.setNodeProperty(node,"Node Label",cl_name)
-        #for member in cluster:
-         #   print member
 
 
+def network_members_xdom(arag_dic,id,cytoscape):
+    for domains,proteins in arag_dic.items():
+        for i in proteins:
+            for node in cytoscape.getNodes():
+                if i == str(node):
+                    print "> %s" %i
+                    pos = 0
+                    for domain in domains.split(","):
+                        print pos+1,pos+20, domain, "0.0"
+                        pos = pos+20
 def main():
     clusters = load_clusters(options.pickle)
     network = load_network(options.net_in,"HLH")
@@ -155,8 +162,9 @@ def main():
     #shape_by_cluster(id,cytoscape,clusters)
     scale_nodesize_by_connectivity(range(1,50,2),id, cytoscape)
     arag_dic = species_arangements(clusters,"hsap")
-    color = [0,0,0]
-    color_by_arrangement(id,cytoscape,arag_dic,color)
+    network_members_xdom(arag_dic,id,cytoscape)
+
+    color_by_arrangement(id,cytoscape,arag_dic)
     add_cluster_id_to_name(network,clusters,"hsap",cytoscape)
 
 if __name__ == '__main__':

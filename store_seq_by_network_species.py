@@ -4,6 +4,10 @@
 #       store_seq_by_network_species.py
 #
 #==============================================================================
+#Locate the Tfsuite module in ../
+import sys, os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
+#==============================================================================
 from optparse import OptionParser
 from Tfsuite.Classes.cluster import Cluster
 from Tfsuite.Parser.cyto import Cyto
@@ -52,5 +56,7 @@ for protein in proteins:
 
     if protein.associated_name in network.nodes.keys():
         names.append(protein.associated_name)
-        print ">"+protein.associated_name
-        print protein.seq
+        #print ">"+protein.associated_name+"_"+protein.uniprot_id
+        #print protein.seq
+        print protein.associated_name
+        print protein.uniprot_id

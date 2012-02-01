@@ -1,11 +1,9 @@
-red: [255, 0, 0]
-green: [0, 255, 0]
 blue: [31, 117, 254]
 blue_green: [13, 152, 186]
 brick_red: [203, 65, 84]
 manatee: [151, 154, 170]
 midnight_blue: [26, 72, 118]
-royal_purple: [(120, 81, 169]
+royal_purple: [120, 81, 169]
 sunglow: [255, 207, 72]
 dandelion: [253, 219, 109]
 
