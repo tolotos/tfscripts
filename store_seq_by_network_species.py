@@ -58,5 +58,5 @@ for protein in proteins:
         names.append(protein.associated_name)
         #print ">"+protein.associated_name+"_"+protein.uniprot_id
         #print protein.seq
-        print protein.associated_name
+        print protein.gene_name, protein.associated_name
         print protein.uniprot_id

@@ -156,7 +156,7 @@ def main():
     from_nodes, to_nodes = network.edges()
     cytoscape.createNodes(nodes)
     cytoscape.createEdges(from_nodes, to_nodes)
-    #cytoscape.performDefaultLayout()
+    #cytoscape.performDefaultLayout()s
     cytoscape.performLayout("force-directed")
     id = cytoscape.getNetworkID()
     #shape_by_cluster(id,cytoscape,clusters)

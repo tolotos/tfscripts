@@ -1,8 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 #
 #  store_orthomcl_clusters.py
-
+#==============================================================================
+#Locate the Tfsuite module in ../
+import sys, os
+sys.path.append( os.path.join( os.getcwd(), '..' ) )
 #==============================================================================
 from optparse import OptionParser
 from Tfsuite.Parser.arangements import Arangements

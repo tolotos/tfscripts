@@ -5,7 +5,7 @@
 #
 #==============================================================================
 from optparse import OptionParser
-from ete2a1 import *
+from ete2 import Tree
 from mechanize import Browser
 from BeautifulSoup import BeautifulSoup
 #==============================================================================
