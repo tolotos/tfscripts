@@ -95,6 +95,7 @@ def scale_nodesize_by_connectivity(range,id,cytoscape):
 def species_arangements(clusters,species):
     arag_dic = {}
     for cluster in clusters:
+
         for member in cluster.members:
             if member.species == species:
                 arag = ",".join(member.domains)
@@ -163,7 +164,7 @@ def main():
     scale_nodesize_by_connectivity(range(1,50,2),id, cytoscape)
     arag_dic = species_arangements(clusters,"hsap")
     network_members_xdom(arag_dic,id,cytoscape)
-
+    print arag_dic
     color_by_arrangement(id,cytoscape,arag_dic)
     add_cluster_id_to_name(network,clusters,"hsap",cytoscape)
 

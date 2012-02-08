@@ -112,7 +112,9 @@ def date_tree(tree):
        internal nodes, the age of the node is the divergence time of the first
        leaf found that descents of child A and child B respectivly.'''
     tree = Tree(tree, format=1)
+    print "Tree loaded!"
     for node in tree.traverse("postorder"):
+        print "Dating %s" %node.name
         if not node.is_root() and not node.is_leaf():
             left, right = node.get_children()[0], node.get_children()[1]
             if inner_type(node) == 0:
