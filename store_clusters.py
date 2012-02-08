@@ -9,7 +9,7 @@ sys.path.append( os.path.join( os.getcwd(), '..' ) )
 #==============================================================================
 from optparse import OptionParser
 from Tfsuite.Parser.arangements import Arangements
-from Tfsuite.Parser.fasta import Fasta
+from Tfsuite.Parser.fasta import read_fasta
 from Tfsuite.Parser.biomart import Biomart
 from Tfsuite.Parser.family import Family
 from Tfsuite.Parser.proteinortho import ProteinOrtho
@@ -44,20 +44,24 @@ cloptions.add_option('-p', '--pickle', dest = 'pickle',
     default = 'pickled_orthomcl_clusters.p')
 (options, args) = cloptions.parse_args()
 #==============================================================================
-def create_clusters(f_clusters,f_arag,f_fasta,f_family, f_biomart):
+def create_clusters(f_clusters,f_arag,fasta_file,f_family, f_biomart):
     ''' Loads an orthomcl output file, to create clusters. In addition proteins
         are added from the corresponding hmmout file, species information is
         added from speciesMapping(Andreas) and fasta sequences for each protein
         are loaded. Function returns an interable with cluster objects'''
-    proteinortho, arangements, fasta = ProteinOrtho(), Arangements(), Fasta()
+    proteinortho, arangements = ProteinOrtho(), Arangements() 
     family, biomart = Family(), Biomart()
     proteinortho.load(f_clusters)
     arangements.load(f_arag)
-    fasta.load(f_fasta)
     family.load(f_family)
     biomart.load(f_biomart)
+
+
+
+
     for protein in arangements:
-        protein.add_sequence(fasta)
+        protein.add_sequence(fasta_file,"fasta")
+        
         protein.add_family(family)
         protein.add_identifiers(biomart)
     for cluster in proteinortho:
