@@ -1,16 +1,16 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 #
 #  store_orthomcl_clusters.py
 #==============================================================================
 #Locate the Tfsuite module in ../
-import sys, os
-sys.path.append( os.path.join( os.getcwd(), '..' ) )
+import sys
+import os
+sys.path.append(os.path.join(os.getcwd(), '..'))
 #==============================================================================
 from optparse import OptionParser
 from Tfsuite.core.clustergroup import ClusterGroup
 
-import os
 import glob
 import copy
 import cPickle as pickle
@@ -18,31 +18,31 @@ import cPickle as pickle
 #Command line options==========================================================
 #==============================================================================
 usage = 'usage: %prog [options]'
-desc='''%prog takes orthomcl output (clusters) and creates a pickable object
+desc = '''%prog takes orthomcl output (clusters) and creates a pickable object
         containing all loaded clusters.'''
-cloptions = OptionParser(usage = usage, description=desc)
-cloptions.add_option('-c', '--clusters', dest = 'clusters',
-    help = 'Clusters', metavar='FILE',
-    default = '')
-cloptions.add_option('-f', '--fasta', dest = 'fasta',
-    help = 'Fasta file containing sequences of Proteins', metavar='FILE',
-    default = '')
-cloptions.add_option('-d', '--domains', dest = 'dom_arang',
-    help = 'Domain arrangements', metavar='FILE',
-    default = '')
-cloptions.add_option('-m', '--familymapping', dest = 'family',
-    help = 'Mapping from domain arrangement to family.', metavar='FILE',
-    default = '')
-cloptions.add_option('-b', '--biomart', dest = 'biomart',
-    help = 'Mapping from gene_name to uniprot and associated name.', metavar='FILE',
-    default = '')
-cloptions.add_option('-p', '--pickle', dest = 'pickle',
-    help = 'Filename for the pickled clusters', metavar='FILE',
-    default = 'pickled_orthomcl_clusters.p')
+cloptions = OptionParser(usage=usage, description=desc)
+cloptions.add_option('-c', '--clusters', dest='clusters',
+    help='Clusters', metavar='FILE',
+    default='')
+cloptions.add_option('-f', '--fasta', dest='fasta',
+    help='Fasta file containing sequences of Proteins', metavar='FILE',
+    default='')
+cloptions.add_option('-d', '--domains', dest='dom_arang',
+    help='Domain arrangements', metavar='FILE',
+    default='')
+cloptions.add_option('-m', '--familymapping', dest='family',
+    help='Mapping from domain arrangement to family.', metavar='FILE',
+    default='')
+cloptions.add_option('-b', '--biomart', dest='biomart',
+    help='Mapping from gene_name to uniprot and associated name.', metavar='FILE',
+    default='')
+cloptions.add_option('-p', '--pickle', dest='pickle',
+    help='Filename for the pickled clusters', metavar='FILE',
+    default='pickled_orthomcl_clusters.p')
 (options, args) = cloptions.parse_args()
 #==============================================================================
 
-CG = ClusterGroup(options.clusters, "ProteinOrtho",name="CG1")
+CG = ClusterGroup(options.clusters, "PoteinOrtho", name="CG1")
 
 print CG.clusters
 

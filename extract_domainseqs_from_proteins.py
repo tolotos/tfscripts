@@ -72,5 +72,6 @@ for protein in proteins:
         for domain in xdom[protein.gene_name]:
             domain = domain.split(",")
             if domain[2] == "HLH":
-                print protein.seq[int(domain[0]):int(domain[1])]
+                if int(domain[0])-50 >= 0:
+                    print protein.seq[int(domain[0]):int(domain[1])]
                     
