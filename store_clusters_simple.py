@@ -42,11 +42,12 @@ cloptions.add_option('-p', '--pickle', dest='pickle',
 (options, args) = cloptions.parse_args()
 #==============================================================================
 
-CG = ClusterGroup(options.clusters, "PoteinOrtho", name="CG1")
+CG = ClusterGroup(options.clusters, "ProteinOrtho", name="CG1")
+CG.attach_sequences(options.fasta, "fasta")
 
 print CG.clusters
 
-# def create_clusters(f_clusters,f_arag,fasta_file,f_family, f_biomart):
+        # def create_clusters(f_clusters,f_arag,fasta_file,f_family, f_biomart):
 #     ''' Loads an orthomcl output file, to create clusters. In addition proteins
 #         are added from the corresponding hmmout file, species information is
 #         added from speciesMapping(Andreas) and fasta sequences for each protein
@@ -81,4 +82,3 @@ print CG.clusters
 #     pickle.dump(clusters, open(options.pickle, "wb"))
 # if __name__ == '__main__':
 #     main()
-
