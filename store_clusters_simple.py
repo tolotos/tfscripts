@@ -36,6 +36,9 @@ cloptions.add_option('-m', '--familymapping', dest='family',
 cloptions.add_option('-b', '--biomart', dest='biomart',
     help='Mapping from gene_name to uniprot and associated name.', metavar='FILE',
     default='')
+cloptions.add_option('-x', '--xdom', dest='xdom',
+    help='xdom.', metavar='FILE',
+    default='')
 cloptions.add_option('-p', '--pickle', dest='pickle',
     help='Filename for the pickled clusters', metavar='FILE',
     default='pickled_orthomcl_clusters.p')
@@ -44,8 +47,12 @@ cloptions.add_option('-p', '--pickle', dest='pickle',
 
 CG = ClusterGroup(options.clusters, "ProteinOrtho", name="CG1")
 CG.attach_sequences(options.fasta, "fasta")
+#CG.attach_domains(options.xdom, "xdom")
+CG.attach_domains(options.dom_arang, "arag")
 
-print CG.clusters
+
+# for protein in CG.iter_proteins():
+#     print protein
 
         # def create_clusters(f_clusters,f_arag,fasta_file,f_family, f_biomart):
 #     ''' Loads an orthomcl output file, to create clusters. In addition proteins
