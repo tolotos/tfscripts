@@ -9,8 +9,8 @@ import sys, os
 sys.path.append( os.path.join( os.getcwd(), '..' ) )
 #==============================================================================
 from optparse import OptionParser
-from Tfsuite.Classes.cluster import Cluster
-from Tfsuite.Parser.cyto import Cyto
+from Tfsuite.core.cluster import Cluster
+from Tfsuite.parser.cyto import Cyto
 import cPickle as pickle
 #==============================================================================
 #Command line options==========================================================
@@ -72,5 +72,5 @@ for protein in proteins:
         for domain in xdom[protein.gene_name]:
             domain = domain.split(",")
             if domain[2] == "HLH":
-                print protein.seq[int(domain[0]):int(domain[1])]
+                print protein.seq[int(domain[0])-20:int(domain[1]+20)]
                     

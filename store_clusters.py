@@ -8,11 +8,11 @@ import sys, os
 sys.path.append( os.path.join( os.getcwd(), '..' ) )
 #==============================================================================
 from optparse import OptionParser
-from Tfsuite.Parser.arangements import Arangements
-from Tfsuite.Parser.fasta import read_fasta
-from Tfsuite.Parser.biomart import Biomart
-from Tfsuite.Parser.family import Family
-from Tfsuite.Parser.proteinortho import ProteinOrtho
+from Tfsuite.parser.arangements import Arangements
+from Tfsuite.parser.fasta import read_fasta
+from Tfsuite.parser.biomart import Biomart
+from Tfsuite.parser.family import Family
+from Tfsuite.parser.proteinortho import ProteinOrtho
 import os
 import glob
 import copy
