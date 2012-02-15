@@ -9,8 +9,8 @@ import sys, os
 sys.path.append( os.path.join( os.getcwd(), '..' ) )
 #==============================================================================
 from optparse import OptionParser
-from Tfsuite.core.cluster import Cluster
-from Tfsuite.parser.cyto import Cyto
+from Tfsuite.Classes.cluster import Cluster
+from Tfsuite.Parser.cyto import Cyto
 import cPickle as pickle
 #==============================================================================
 #Command line options==========================================================
