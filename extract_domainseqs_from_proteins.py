@@ -48,20 +48,6 @@ def load_network(file,name):
     network.name = name
     return network
 
-def load_xdom(xdom):
-    prots = {}
-    with open(xdom,"r") as xdom:
-        for line in xdom.readlines():
-            line = line.rstrip().split()
-            if len(line) > 0:
-                if line[0].startswith(">"):
-                    gene_name = line[0].split("|")[1]
-                    prots[gene_name] = []
-                else:
-                    prots[gene_name].append(",".join(line[0:3]))
-    return prots
-xdom = load_xdom(options.xdom_in)
-
 clusters = load_clusters(options.pickle)
 network = load_network(options.net_in,"HLH")
 proteins = proteins_by_species(clusters,"hsap")

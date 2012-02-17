@@ -47,10 +47,19 @@ cloptions.add_option('-p', '--pickle', dest='pickle',
 
 CG = ClusterGroup(options.clusters, "ProteinOrtho", name="CG1")
 CG.attach_sequences(options.fasta, "fasta")
-#CG.attach_domains(options.xdom, "xdom")
-CG.attach_domains(options.dom_arang, "arag")
+CG.attach_domains(options.xdom, "xdom")
+CG.attach_arangement(options.dom_arang, "arag")
+CG.attach_families(options.family, "fam")
 
+for protein in CG.iter_proteins():
+    if protein.species == "hsap" and len(protein.arangement) != len(protein.domains):
+        print protein.gene_name, protein.species
+        print protein.arangement
+        for domain in protein.domains:
+            print domain.id
 
+proteins = CG.get_proteins_by_species("hsap")
+print proteins
 # for protein in CG.iter_proteins():
 #     print protein
 
