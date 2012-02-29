@@ -6,7 +6,7 @@
 #Locate the Tfsuite module in ../
 import sys
 import os
-sys.path.append(os.path.join(os.getcwd(), '..'))
+sys.path.append(os.path.join(os.getcwd(), '../../'))
 #==============================================================================
 from optparse import OptionParser
 from Tfsuite.core.clustergroup import ClusterGroup

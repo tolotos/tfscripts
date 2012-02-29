@@ -159,6 +159,3 @@ def plot_tree(tree):
 
 dated_tree = date_tree(options.tree)
 plot_tree(dated_tree)
-
-
-
