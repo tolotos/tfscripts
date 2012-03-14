@@ -5,38 +5,43 @@
 #
 #==============================================================================
 from optparse import OptionParser
-from ete2 import Tree
+from ete2 import Tree, TextFace, TreeStyle
 from mechanize import Browser
 from BeautifulSoup import BeautifulSoup
+import sys
 #==============================================================================
 #Command line options==========================================================
 #==============================================================================
 usage = 'usage: %prog [options]'
-desc='''%prog takes a newick tree and queries timetree to date the splits.
+desc = '''% prog takes a newick tree and queries timetree to date the splits.
         Trees can be produced using the mean or median estimate. In addition
         a CSV can be produced listing the splits.'''
-cloptions = OptionParser(usage = usage, description=desc)
-cloptions.add_option('-t', '--tree', dest = 'tree',
-    help = 'Phylogeny, must be provided as a newick tree',
-    metavar='FILE', default = '')
-cloptions.add_option('-m', '--mode', dest = 'mode',
-    help = 'Mean == 0, median == 1 . Default is 0.',
-    metavar='FILE', default = '0')
-cloptions.add_option('-o', '--output', dest = 'output',
-    help = 'basename for the output',
-    metavar='FILE', default = '')
-cloptions.add_option('-l', '--list', dest = 'list',
-    help = 'If specified a csv is produced containing the splittimes',
-    metavar='FILE', default = '')
+cloptions = OptionParser(usage=usage, description=desc)
+cloptions.add_option('-t', '--tree', dest='tree',
+    help='Phylogeny, must be provided as a newick tree',
+    metavar='FILE', default='')
+cloptions.add_option('-m', '--mode', dest='mode',
+    help='Mean == 0, median == 1 . Default is 0.',
+    metavar='FILE', default='0')
+cloptions.add_option('-o', '--output', dest='output',
+    help='basename for the output',
+    metavar='FILE', default='')
+cloptions.add_option('-l', '--list', dest='list',
+    help='If specified a csv is produced containing the splittimes',
+    metavar='FILE', default='')
+cloptions.add_option('-m', '--mapping', dest='mapping',
+    help='NCBI taxid to scientific name mapping',
+    metavar='FILE', default='names.dmp')
 (options, args) = cloptions.parse_args()
 #==============================================================================
 
-def query_timetree(taxon_a,taxon_b):
+
+def query_timetree(taxon_a, taxon_b):
     '''Mechanize is used to query the webinterface of timetree with two taxa
        and returns the result page after submiting the query form.'''
     br = Browser()
     br.addheaders = [('User-agent', 'Firefox')]
-    br.set_handle_robots( False )
+    br.set_handle_robots(False)
     br.open("http://timetree.org")
     br.select_form(name="query_frm")
     br['taxon_a'] = taxon_a
@@ -44,6 +49,33 @@ def query_timetree(taxon_a,taxon_b):
     resp = br.submit()
     html = resp.get_data()
     return html
+
+
+def read_taxid_db(source):
+    taxid_db = {}
+    try:
+        with open(source, "r") as file:
+            for line in file.readlines():
+                line = line.rstrip().split("|")
+                line = [i.strip("\t") for i in line]
+                if line[3].split()[0] == "scientific":
+                    taxid_db[line[0]] = line[1]
+        return taxid_db
+    except IOError:
+        print "!----ERROR----!"
+        print "File %s does not exit!" % source
+        sys.exit(1)
+    except KeyboardInterrupt:
+        sys.exit(1)
+
+
+def taxid_to_scientific_name(tree, taxid_mapping):
+    taxid_db = read_taxid_db(taxid_mapping)
+    tree = Tree(tree, format=1)
+    for node in tree.traverse("postorder"):
+        print node.name
+        node.name = taxid_db[node.name]
+    return tree
 
 def extract_time(html):
     '''BeautifulSoup html parser is used to extract the estimated times from
@@ -65,6 +97,7 @@ def extract_time(html):
        # print "Sorry entry could not be found in timetree!"
     return results
 
+
 def inner_type(node):
     '''Determines the three possible inner node types in regard to the children:
        node has two leafs (type 0), node has one leaf and one other inner node
@@ -82,6 +115,7 @@ def inner_type(node):
         if not right.is_leaf():
             return 2
 
+
 def select_age(age):
     '''Selects the used aged in the order expert, median, mean. If no times
        could be extracted it returns a dist of 1.0, the standard that is used
@@ -95,11 +129,13 @@ def select_age(age):
     else:
         return 1.0
 
+
 def date_node(taxon_a, taxon_b):
     '''Takes two taxa and computes the split provided by timetree'''
-    html = query_timetree(taxon_a,taxon_b)
+    html = query_timetree(taxon_a, taxon_b)
     age = extract_time(html)
     return select_age(age)
+
 
 def date_tree(tree):
     '''Dates each internal node of a provided newick tree in format 1. The tree
@@ -114,11 +150,11 @@ def date_tree(tree):
     tree = Tree(tree, format=1)
     print "Tree loaded!"
     for node in tree.traverse("postorder"):
-        print "Dating %s" %node.name
+        print "Dating %s" % node.name
         if not node.is_root() and not node.is_leaf():
             left, right = node.get_children()[0], node.get_children()[1]
             if inner_type(node) == 0:
-                node.dist = date_node(left.name,right.name)
+                node.dist = date_node(left.name, right.name)
             elif inner_type(node) == 1:
                 if left.is_leaf():
                     right = right.get_leaf_names()[0]
@@ -131,6 +167,7 @@ def date_tree(tree):
                 right = right.get_leaf_names()[1]
                 node.dist = date_node(left, right)
     return tree
+
 
 def plot_tree(tree):
     '''Plots a tree object with all nodes and leafes labeld by name and
@@ -150,8 +187,8 @@ def plot_tree(tree):
                         bgcolor=None,
                         penwidth=0,
                         fstyle='bold')
-        node.add_face(name,column=0)
-        node.add_face(dist,column=0)
+        node.add_face(name, column=0)
+        node.add_face(dist, column=0)
     ts = TreeStyle()
     ts.title.add_face(TextFace("All species, with timetree dates", fsize=20), column=0)
     tree.show(tree_style=ts)

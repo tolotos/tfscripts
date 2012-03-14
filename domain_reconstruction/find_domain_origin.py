@@ -38,11 +38,16 @@ def main():
     CG = load_clustergroup(options.pickle)
     t = Tree(options.tree, format=8)
     species = []
+    arag = []
     for protein in CG.iter_proteins():
-        if "PAS" in protein.arangement:
-            # print ">%s_%s" % (protein.gene_name, protein.species)
+        if "PAS" in protein.arangement: #and "HLH" in protein.arangement:
+            print ">%s_%s" % (protein.gene_name, protein.species)
             # print protein.seq
+            print protein.arangement
+            arag.append(",".join(protein.arangement))
             species.append(protein.species)
+    arag = list(set(arag))
+    print arag
     species = list(set(species))
     mrca = t.get_common_ancestor(species)
     print mrca.name
